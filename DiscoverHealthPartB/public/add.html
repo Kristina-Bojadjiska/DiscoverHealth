@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Add Resource – Part A</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font:16px/1.5 system-ui, Arial, sans-serif; margin:2rem; max-width:900px}
+    label{display:block; margin:.6rem 0 .2rem}
+    input, textarea{width:100%; padding:.5rem; border:1px solid #ccc; border-radius:6px}
+    button{margin-top:1rem; padding:.6rem 1rem; border:0; border-radius:6px; background:#0a58ca; color:#fff; cursor:pointer}
+    pre{background:#f6f8fa; padding:1rem; border-radius:8px; overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>Add a Healthcare Resource (Part A)</h1>
+  <form id="form">
+    <label>Name <input name="name" required /></label>
+    <label>Category <input name="category" placeholder="Hospital/Clinic/Service" required /></label>
+    <label>Country <input name="country" value="UK" required /></label>
+    <label>Region <input name="region" placeholder="e.g., London" required /></label>
+    <label>Latitude <input name="lat" type="number" step="0.0001" required /></label>
+    <label>Longitude <input name="lon" type="number" step="0.0001" required /></label>
+    <label>Description <textarea name="description" rows="3" required></textarea></label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Result</h2>
+  <pre id="out">—</pre>
+
+  <script>
+    const form = document.getElementById('form');
+    const out  = document.getElementById('out');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      data.lat = parseFloat(data.lat);
+      data.lon = parseFloat(data.lon);
+
+      out.textContent = 'Submitting...';
+      try {
+        const res = await fetch('/api/resources', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        out.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        out.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
