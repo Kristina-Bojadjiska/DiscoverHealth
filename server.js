@@ -8,8 +8,11 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const Database = require('better-sqlite3');
+const cors = require('cors');
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173', credentials: true })); // ← CORS here
+app.use(express.static('public'));
 const PORT = 3000;
 
 const dbPath = path.join(__dirname, 'discoverhealth.db');
@@ -18,6 +21,9 @@ console.log('[BOOT] DB:', dbPath, dbExists ? '(found)' : '(missing)');
 
 const db = new Database(dbPath);
 db.exec('PRAGMA foreign_keys = ON;');
+
+const rootFile = path.join(__dirname, 'public', 'index.html');
+app.get('/', (_req, res) => res.sendFile(rootFile));
 
 // show tables on boot — helps checking the schema quickly
 try {
@@ -28,12 +34,6 @@ try {
 }
 
 app.use(express.json()); // parse JSON bodies
-
-app.get('/', (req, res) => {
-  res
-    .status(200)
-    .send(`<h2>DiscoverHealth Part A API</h2><p>Try: <code>/api/resources?region=London</code></p>`);
-});
 
 /* GET /api/resources?region=RegionName
    returns all resources for an exact region match */
