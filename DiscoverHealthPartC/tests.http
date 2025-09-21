@@ -1,0 +1,33 @@
+### Test 1: Missing fields
+POST http://localhost:3000/api/resources
+Content-Type: application/json
+
+{ "name": "Only Name" }
+
+### Test 2: Bad lat/lon
+POST http://localhost:3000/api/resources
+Content-Type: application/json
+
+{
+  "name": "Clinic",
+  "category": "Health",
+  "country": "UK",
+  "region": "London",
+  "lat": "abc",
+  "lon": "xyz",
+  "description": "Test"
+}
+
+### Test 3: Valid request
+POST http://localhost:3000/api/resources
+Content-Type: application/json
+
+{
+  "name": "Clinic",
+  "category": "Health",
+  "country": "UK",
+  "region": "London",
+  "lat": 51.5,
+  "lon": -0.1,
+  "description": "Valid test"
+}
